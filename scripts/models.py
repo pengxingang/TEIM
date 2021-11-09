@@ -2,9 +2,8 @@ import sys
 sys.path.append('/'.join(sys.path[0].split('/')[:-1]))
 import torch
 import torch.nn as nn
-from torch.utils.data.dataloader import default_collate as co_fn
-# from ..pretrain.models import TransformerVAE
-import numpy as np
+# from torch.utils.data.dataloader import default_collate as co_fn
+
 
 class ResNet(nn.Module):
     def __init__(self, cnn):
@@ -16,6 +15,7 @@ class ResNet(nn.Module):
         # out = tmp_data + self.linear(data.permute(0, 2, 3, 1)).permute(0, 3, 1, 2)
         out = tmp_data + data
         return out
+
 
 class NewCNN2dBaseline(nn.Module):
     def __init__(self, tokenizer, dim_hidden, model_type, form, **kwargs):
@@ -39,22 +39,6 @@ class NewCNN2dBaseline(nn.Module):
             nn.ReLU(),
         )
 
-        # if 'ae' not in self.model_type:
-        #     self.cnn_module = nn.Sequential(
-        #         # nn.Conv2d(dim_hidden, dim_hidden, kernel_size=3, padding=1),
-        #         ResNet(nn.Conv2d(dim_hidden, dim_hidden, kernel_size=3, padding=1)),
-        #         nn.BatchNorm2d(dim_hidden),
-        #         nn.ReLU(),
-
-        #         # nn.Conv2d(dim_hidden, dim_hidden, kernel_size=3, padding=1),
-        #         ResNet(nn.Conv2d(dim_hidden, dim_hidden, kernel_size=3, padding=1)),
-        #         nn.BatchNorm2d(dim_hidden),
-        #         nn.ReLU(),
-
-        #         nn.AdaptiveMaxPool2d(1),
-        #         nn.Flatten(),
-        #     )
-        # else:
         self.cnn_list = nn.ModuleList([
             nn.Sequential(
                 ResNet(nn.Conv2d(dim_hidden, dim_hidden, kernel_size=3, padding=1)),
@@ -76,7 +60,6 @@ class NewCNN2dBaseline(nn.Module):
         ])  
         self.global_linear = nn.Conv2d(32, dim_hidden, kernel_size=1, stride=1)
 
-            
         dim_out = dim_hidden
         self.dense_module = nn.Sequential(
             nn.Dropout(0.2),
@@ -139,6 +122,7 @@ class NewCNN2dBaseline(nn.Module):
         self.inter_map = inter_map
         return outputs
 
+
 class AutoEncoder(nn.Module):
     def __init__(self, 
         tokenizer,
@@ -157,10 +141,7 @@ class AutoEncoder(nn.Module):
             nn.BatchNorm1d(dim_hid),
             nn.ReLU(),
         )
-        # if data_mode['seq2vec'] == 'pool':
-        #     self.seq2vec = nn.MaxPool1d(kernel_size=len_seq, stride=1, return_indices=True)
-        #     self.vec2seq = nn.MaxUnpool1d(kernel_size=len_seq, stride=1)
-        # elif data_mode['seq2vec'] == 'flatten':
+
         self.seq2vec = nn.Sequential(
             nn.Flatten(),
             nn.Linear(len_seq * dim_hid, dim_hid),
@@ -186,17 +167,13 @@ class AutoEncoder(nn.Module):
         seq_emb = self.embedding_module(inputs)
         
         seq_enc = self.encoder(seq_emb.transpose(1, 2))
-        # if self.data_mode['seq2vec'] == 'pool':
-        #     vec, indices = self.seq2vec(seq_enc)
-        #     seq_repr = self.vec2seq(vec, indices)
-        #     vec, indices = vec.squeeze(-1), indices.squeeze(-1)
-        # elif self.data_mode['seq2vec'] == 'flatten':
         vec = self.seq2vec(seq_enc)
         seq_repr = self.vec2seq(vec)
         indices = None
         seq_dec = self.decoder(seq_repr)
         out = self.out_layer(seq_dec.transpose(1, 2))
         return out, seq_enc, vec, indices
+
 
 class View(nn.Module):
     def __init__(self, *shape):
