@@ -4,7 +4,7 @@ This repository contains the codes of TEIM (**T**CR-**E**pitope **I**nteraction 
 Both models only takes the primary sequences of CDR3βs and the epitopes as input. **TEIM-Res** predicts the distances and the contact probabilities between all residue pairs of CDR3βs and epitopes. **TEIM-Samp** predicts whether the CDR3βs and epitopes can bind to each other.
 
 ## Environment
-0. Install anaconda.
+0. Install Anaconda.
 1. Use `teim.yml` to create a new environment `teim` and install requirements (see [anaconda doc](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-from-an-environment-yml-file) for more information):
     ```
     conda env create -f teim.yml
