@@ -101,7 +101,7 @@ class BdTrainerSystem(pl.LightningModule):
 
 
 class BindPredictor:
-    def __init__(self, path='./ckpt/teim_samp.ckpt'):
+    def __init__(self, path='./ckpt/teim_seq.ckpt'):
         self.model = BdTrainerSystem.load_from_checkpoint(path)
         self.model = self.model.cuda()
         self.model.eval()
@@ -162,8 +162,8 @@ def predict_binding(input_path, save_dir='./outputs', batch_size=128):
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
     df = pd.DataFrame(dict(cdr3=seqs_cdr3, epitope=seqs_epi, binding=pred_list))
-    df.to_csv(os.path.join(save_dir, 'sample_level_binding.csv'))
-
+    df.to_csv(os.path.join(save_dir, 'sequence_level_binding.csv'))
+    print('Done. The predictions are in', save_dir)
 
 if __name__ == '__main__':
     input_path = './inputs/inputs_bd.csv'

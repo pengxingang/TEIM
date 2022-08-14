@@ -1,0 +1,4 @@
+.history/*
+outputs/*
+__pycache__/*
+*.pyc

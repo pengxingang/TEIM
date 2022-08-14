@@ -73,13 +73,17 @@ def get_numbering(seqs, ):
     df_seqs = pd.DataFrame(list(zip(id_list, seqs_uni)), columns=['Id', 'cdr3'])
     
     # # using ANARCI to get numbering file
-    cmd = ("conda run -n teim "  # this environment name should be the same as the one you install anarci
-            " ANARCI"
+    # cmd = ("conda run -n teim "  # this environment name should be the same as the one you install anarci
+    cmd = (" ANARCI"
             " -i tmp_faketcr.fasta  -o tmp_align --csv -p 24")
     res = os.system(cmd)
     
     # # parse numbered seqs data
-    df = pd.read_csv('tmp_align_B.csv')
+    try:
+        df = pd.read_csv('tmp_align_B.csv')
+    except FileNotFoundError:
+        raise FileNotFoundError('Error: ANARCI failed to align, please check whether ANARCI exists in your environment')
+        
     cols = ['104', '105', '106', '107', '108', '109', '110', '111', '111A', '111B', '112C', '112B', '112A', '112', '113', '114', '115', '116', '117', '118']
     seqs_al = []
     for col in cols:

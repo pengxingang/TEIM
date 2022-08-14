@@ -386,38 +386,13 @@ def predict_dist_site(input_path, save_dir='./outputs', batch_size=128):
         # # save
         if not os.path.exists(save_dir):
             os.makedirs(save_dir,)
-        for cdr3, epitope, dist_site in tqdm(zip(seqs_cdr3_batch, seqs_epi_batch, pred)):
+        for cdr3, epitope, dist_site in tqdm(zip(seqs_cdr3_batch, seqs_epi_batch, pred), desc='Saving prediction...'):
             name_func = lambda x: x + '_' + cdr3 + '_' + epitope + '.csv'
             dist = dist_site[..., 0]
             site = dist_site[..., 1]
             pd.DataFrame(dist, index=list(cdr3), columns=list(epitope)).to_csv(os.path.join(save_dir, name_func('dist')))
             pd.DataFrame(site, index=list(cdr3), columns=list(epitope)).to_csv(os.path.join(save_dir, name_func('site')))
-
-
-def eval():
-    # # evaluate results
-    new_dir = './outputs'
-    old_dir = '../results/test_github'
-
-    for file_name in os.listdir(os.path.join(new_dir)):
-        if not (file_name.startswith('dist') or file_name.startswith('site')):
-            continue
-        out = file_name[:file_name.find('_')]
-        old_file_name = file_name[file_name.find('_')+1:]
-        path_new = os.path.join(new_dir, file_name)
-        df_new = pd.read_csv(path_new, index_col=0)
-        # find old path
-        all_old_files = os.listdir(os.path.join(old_dir, out))
-        idx = np.where([old_file_name in f for f in all_old_files])[0][0]
-        old_file_name = all_old_files[idx]
-        path_old = os.path.join(old_dir, out, old_file_name)
-        if os.path.exists(path_old):
-            df_old = pd.read_csv(path_old, index_col=0)
-            df_delta = df_old - df_new
-            print(file_name, 'delta is', df_delta.values.sum())
-        else:
-            print(file_name, 'does not exist.')
-    print('Finish.')
+    print('Done. The predictions are in', save_dir)
 
 
 if __name__ == '__main__':
