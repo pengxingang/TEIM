@@ -13,6 +13,10 @@ Both models only takes the primary sequences of CDR3βs and the epitopes as inpu
     ```bash
     conda install -c bioconda anarci
     ```
+We also provided a docker file to facilitate the installation of environment. You can build the docker by runing
+```bash
+docker build -t teim:v1 .
+```
 
 ## Inference
 ### Predict the residue-level interactions of TCR-epitope pairs
