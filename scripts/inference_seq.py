@@ -14,7 +14,7 @@ from torch.nn import functional as F
 from sklearn.metrics import roc_auc_score, average_precision_score
 import warnings
 warnings.filterwarnings("ignore")
-os.environ['CUDA_VISIBLE_DEVICES'] = '0'
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
 class BdTrainerSystem(pl.LightningModule):
@@ -103,7 +103,7 @@ class BdTrainerSystem(pl.LightningModule):
 class BindPredictor:
     def __init__(self, path='./ckpt/teim_seq.ckpt'):
         self.model = BdTrainerSystem.load_from_checkpoint(path)
-        self.model = self.model.cuda()
+        self.model = self.model.to(device)
         self.model.eval()
         self.tokenizer = Tokenizer()
 
@@ -124,9 +124,9 @@ class BindPredictor:
         pred = []
         for batch in np.arange(0, len(encoding_cdr3) // bs + 1):
             idx_end = min((batch+1)*bs, len(encoding_cdr3))
-            input_cdr3 = torch.Tensor(encoding_cdr3[batch*bs:idx_end, ...]).cuda()
-            input_epi = torch.Tensor(encoding_epi[batch*bs:idx_end, ...]).cuda()
-            input_vec = torch.Tensor(epi_vec[batch*bs:idx_end, ...]).cuda()
+            input_cdr3 = torch.Tensor(encoding_cdr3[batch*bs:idx_end, ...]).to(device)
+            input_epi = torch.Tensor(encoding_epi[batch*bs:idx_end, ...]).to(device)
+            input_vec = torch.Tensor(epi_vec[batch*bs:idx_end, ...]).to(device)
             pred_batch = self.model([input_cdr3, input_epi, input_vec])
             pred_batch = pred_batch.cpu().detach().numpy()
             pred.extend(pred_batch)

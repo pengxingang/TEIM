@@ -8,6 +8,7 @@ sys.path.append('.')
 from models import AutoEncoder
 base_data_dir = './all_data/'
 
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 def GetBlosumMat(residues_list):
     n_residues = len(residues_list)  # the number of amino acids _ 'X'
@@ -74,7 +75,7 @@ def get_numbering(seqs, ):
     
     # # using ANARCI to get numbering file
     # cmd = ("conda run -n teim "  # this environment name should be the same as the one you install anarci
-    cmd = (" ANARCI"
+    cmd = ("ANARCI"
             " -i tmp_faketcr.fasta  -o tmp_align --csv -p 24")
     res = os.system(cmd)
     
@@ -105,7 +106,7 @@ def get_numbering(seqs, ):
     return df.loc[seqs, 'cdr3_align'].values
 
 
-def load_ae_model(tokenizer, path='./ckpt/epi_ae.ckpt'):
+def load_ae_model(tokenizer, path='./ckpt/epi_ae.ckpt',):
     # tokenizer = Tokenizer()
     ## load model
     model_args = dict(
@@ -117,7 +118,7 @@ def load_ae_model(tokenizer, path='./ckpt/epi_ae.ckpt'):
     model.eval()
 
     ## load weights
-    state_dict = torch.load(path)
+    state_dict = torch.load(path, map_location=device)
     state_dict = {k[6:]:v for k, v in state_dict.items()}
     model.load_state_dict(state_dict)
     return model

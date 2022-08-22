@@ -20,7 +20,7 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error, median_abso
 import warnings
 warnings.filterwarnings("ignore")
 
-os.environ['CUDA_VISIBLE_DEVICES'] = '2'
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
 class MyDataSet(torch.utils.data.Dataset):
@@ -289,7 +289,7 @@ class PdbPredictor:
             'use_vae': False,
         }
         self.model, self.tokenizer = self.load_pdb_model()
-        self.model = self.model.cuda()
+        self.model = self.model.to(device)
         self.model.eval()
 
     def load_pdb_model(self):
@@ -302,7 +302,7 @@ class PdbPredictor:
                 model_type = self.data_mode['model_type']
             ), lr=0.1, weight_decay=0.1, model=deepcopy(base_model))
 
-        model.load_state_dict(torch.load(pdb_model_path)['state_dict'])
+        model.load_state_dict(torch.load(pdb_model_path, map_location=device)['state_dict'])
 
         n_para = np.sum([a.numel() for a in model.parameters()])
         print('Number of paramters', n_para)
@@ -340,9 +340,9 @@ class PdbPredictor:
         pred = []
         for batch in np.arange(0, len(encoding_cdr3) // bs + 1):
             idx_end = min((batch+1)*bs, len(encoding_cdr3))
-            input_cdr3 = torch.Tensor(encoding_cdr3[batch*bs:idx_end, ...]).cuda()
-            input_epi = torch.Tensor(encoding_epi[batch*bs:idx_end, ...]).cuda()
-            input_vec = torch.Tensor(epi_vec[batch*bs:idx_end, ...]).cuda()
+            input_cdr3 = torch.Tensor(encoding_cdr3[batch*bs:idx_end, ...]).to(device)
+            input_epi = torch.Tensor(encoding_epi[batch*bs:idx_end, ...]).to(device)
+            input_vec = torch.Tensor(epi_vec[batch*bs:idx_end, ...]).to(device)
             pred_batch = self.model([input_cdr3, input_epi, input_vec])
             pred_batch = pred_batch.cpu().detach().numpy()
             pred.extend(pred_batch)

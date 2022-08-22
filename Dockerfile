@@ -8,10 +8,6 @@ WORKDIR /opt/app
 RUN set -xe \
     && apt-get update \
     && apt-get install python3-pip -y
-# RUN pip3 install --upgrade pip
-# RUN python3 -m pip install -i https://pypi.tuna.tsinghua.edu.cn/simple --upgrade pip
-# RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple 
-# RUN pip install -r requirements.txt --default-timeout=1000
 COPY . /opt/app
 
 RUN apt-get update
@@ -21,18 +17,13 @@ RUN wget \
     && mkdir /root/.conda \
     && bash Miniconda3-latest-Linux-x86_64.sh -b \
     && rm -f Miniconda3-latest-Linux-x86_64.sh
-RUN conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/ \
-    && conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main/ \
-    && conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/conda-forge/
+# RUN conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/bioconda/
+# RUN conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/pytorch/
+# RUN conda config --set show_channel_urls yes
 RUN conda install -c bioconda anarci
-RUN conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/pytorch/ \
-    && conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/ \
-    && conda config --set show_channel_urls yes
-RUN conda config --set remote_read_timeout_secs 1000.0
-# RUN conda install -c bioconda anarci
 RUN conda install pytorch==1.10.0 cudatoolkit=10.2 -c pytorch
 
-RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+# RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
 RUN python -m pip install --upgrade pip
 RUN pip install biopython==1.79
 RUN pip install pytorch-lightning==1.6.4
