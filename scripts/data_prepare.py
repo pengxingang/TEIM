@@ -9,8 +9,6 @@ import os
 from sklearn.model_selection import GroupKFold, GroupShuffleSplit
 from torch.utils.data import Subset
 from utils.encoding import *
-from scripts.baselines import ImRexEncoder, NetTCREncoder, ERGOEncoder
-
 
 
 def make_shuffled_nega(cdr3, epi, labels, epi_id):

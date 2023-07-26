@@ -1,0 +1,28 @@
+# TEIM-Res training
+name: teim_res
+training:
+  lr: 2.e-3
+  epochs: 500
+  batch_size: 128
+  patience: 50
+  decay: 0.5
+
+pretraining:
+  path: ./ckpt/teim_seq.ckpt
+
+model:
+  ae_model:
+    dim_hid: 32
+    len_epi: 12
+    path: ./ckpt/epi_ae.ckpt
+  dim_hid: 256
+  layers_inter: 2
+  dim_seqlevel: 256
+  inter_type: mul
+
+data:
+  dataset: reslevel_data
+  path: 
+    summary: ../data/stcrdab_pdb.csv
+    mat: ../data/contact_map
+  split: cv-new_epi

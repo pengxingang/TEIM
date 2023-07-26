@@ -1,15 +1,27 @@
 # TEIM: *TCR-Epitope Interaction Modeling*
-This repository contains the codes of TEIM (**T**CR-**E**pitope **I**nteraction **M**odeling). TEIM is a deep learning-based model to predict the TCR-epitope interactions, including two submodels TEIM-Res (TEIM at **Res**idue level) and TEIM-Samp (TEIM at **Seq**uence level). 
+This repository contains the codes for the paper [TEIM: Characterizing the interaction conformation between T-cell receptors and epitopes with deep learning](https://www.nature.com/articles/s42256-023-00634-4) published in Nature Machine Intelligence.
+
+![TEIM](./model.png)
+
+TEIM (**T**CR-**E**pitope **I**nteraction **M**odeling) is a deep learning-based model to predict the TCR-epitope interactions, including two submodels TEIM-Res (TEIM at **Res**idue level) and TEIM-Samp (TEIM at **Seq**uence level). 
 
 Both models only takes the primary sequences of CDR3βs and the epitopes as input. **TEIM-Res** predicts the distances and the contact probabilities between all residue pairs of CDR3βs and epitopes. **TEIM-Seq** predicts whether the CDR3βs and epitopes can bind to each other.
 
 ## Dependency
-0. Install Python>=3.8
+0. Install Python>=3.8 and Anaconda.
 1. Install basic packages using:
     ```bash
+    # [Optional] Create a new environment and activate it
+    conda create -n teim python=3.8
+    conda activate teim
+
+    # Install Pytorch packages (for CUDA 11.3)
+    conda install pytorch==1.10.1 cudatoolkit=11.3 -c pytorch -c conda-forge
+    # Install other packages
     pip install -r requirements.txt
     ```
-2. Install [ANARCI](https://anaconda.org/bioconda/anarci) for CDR3 numbering on the new environment.
+    **Note**: Change the Pytorch version to be compatible with your CUDA version. Besides, since the Pytorch Lightning version we used is 1.6.4, the compatible Pytorch version is $>=1.8,<=1.11$ (see [here](https://lightning.ai/docs/pytorch/stable/versioning.html)).
+2. Install [ANARCI](https://anaconda.org/bioconda/anarci) for CDR3 numbering.
     ```bash
     conda install -c bioconda anarci
     ```
@@ -47,3 +59,24 @@ docker build -t teim:v1 .
 
 
 
+## Training
+Please refer to the directory [`train_teim`](./train_teim/).
+
+## Citation
+```bibtex
+@article{Peng2023,
+  doi = {10.1038/s42256-023-00634-4},
+  url = {https://doi.org/10.1038/s42256-023-00634-4},
+  year = {2023},
+  month = mar,
+  publisher = {Springer Science and Business Media {LLC}},
+  volume = {5},
+  number = {4},
+  pages = {395--407},
+  author = {Xingang Peng and Yipin Lei and Peiyuan Feng and Lemei Jia and Jianzhu Ma and Dan Zhao and Jianyang Zeng},
+  title = {Characterizing the interaction conformation between T-cell receptors and epitopes with deep learning},
+  journal = {Nature Machine Intelligence}
+}
+``````
+## Contact
+If you have any questions, please contact us at xingang.peng@gmail.com

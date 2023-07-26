@@ -1,0 +1,29 @@
+# TEIM-Seq training
+name: teim_seq
+title: seqlevel cv with shuffled negative 
+training:
+  lr: 2.e-4
+  epochs: 25
+  batch_size: 512
+
+model:
+  ae_model:
+    dim_hid: 32
+    len_epi: 12
+    path: ./ckpt/epi_ae.ckpt
+  dim_hid: 256
+  layers_inter: 2
+  dim_seqlevel: 256
+  inter_type: mul
+
+data:
+  dataset: seqlevel_data
+  file_list:
+    - vdj_all
+    - ncov_unseen
+    - mcpas_unseen
+    - ncov_seen
+    - mcpas_seen
+  negative: shuffle
+  path: ../data/binding_data
+  split: cv-new_epitope
